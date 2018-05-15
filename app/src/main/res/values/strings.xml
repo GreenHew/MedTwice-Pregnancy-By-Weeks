@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Pregnancy By Weeks</string>
+    <string name="action_settings">action settings</string>
+    <string name="pregnancy_by_weeks">Pregnancy By Weeks</string>
+    <string name="select_estimation_mode">Select Estimation Mode:</string>
+    <string name="accept">Accept</string>
+    <string name="estimate_current_week">Estimate Current Week</string>
+    <string name="current_week">Current Week:</string>
+    <string name="_0">0</string>
+    <string-array name="week_estimation_type">
+        <item>Last Menstrual Period (LMP)</item>
+        <item>Conception Date</item>
+        <item>Projected Due Date</item>
+    </string-array>
+    <string name="settings_name">Set Week</string>
+    <string name="helpful_links">Helpful links:</string>
+    <string name="welcome">Welcome to Week </string>
+    <string name="week_out_of_bounds">Only weeks 4 through 41.</string>
+    <string name="reset_week">Reset Week</string>
+    <string name="first_trimester">First Trimester</string>
+    <string name="menu_showing_all_weeks_available">Menu showing all weeks available</string>
+</resources>
