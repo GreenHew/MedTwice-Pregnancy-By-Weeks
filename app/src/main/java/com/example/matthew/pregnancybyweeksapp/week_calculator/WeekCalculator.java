@@ -13,8 +13,6 @@ public class WeekCalculator {
         currentWeek = 0;
     }
 
-    public void setWeek(int year, int  month, int day) {}
-
     int getYear() {
         return year;
     }
@@ -31,17 +29,7 @@ public class WeekCalculator {
         return currentWeek;
     }
 
-    void setYear(int year) {
-        this.year = year;
-    }
-
-    void setMonth(int month) {
-        this.month = month;
-    }
-
-    void setDay(int day) {
-        this.day = day;
-    }
+    public int daysUntilNextWeek() {return 0;}
 
     void setCurrentWeek(int currentWeek) {
         this.currentWeek = currentWeek;

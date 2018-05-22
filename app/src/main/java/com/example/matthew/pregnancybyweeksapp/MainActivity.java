@@ -1,8 +1,21 @@
 package com.example.matthew.pregnancybyweeksapp;
 
+import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.FragmentManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,12 +33,15 @@ import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorLMP
 import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekSelectionFragment;
 import com.example.matthew.pregnancybyweeksapp.week_menu.WeekListDialogFragment;
 
+import java.util.Calendar;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements WeekSelectionFragment.OnAcceptClickListener {
 
     WeekListDialogFragment weekListDialogFragment;
     Bundle instanceState;
+    NotificationManager notificationManager;
+    WeekCalculator weekCalculator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +49,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         instanceState = savedInstanceState;
 
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            notificationManager.createNotificationChannel(
+                    new NotificationChannel(
+                            "NotificationEx", "NotificationEx",
+                            NotificationManager.IMPORTANCE_DEFAULT));
+
         //Inflate and setup custom action bar
         LayoutInflater layoutInflater = LayoutInflater.from(this);
-        View view = layoutInflater.inflate(R.layout.custom_action_bar, null);
+        @SuppressLint("InflateParams") View view = layoutInflater.inflate(R.layout.custom_action_bar, null);
         Objects.requireNonNull(getSupportActionBar()).setHomeButtonEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayShowCustomEnabled(true);
@@ -55,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         if(year == 0)
             openWeekSelectionFragment();
         else {
-            WeekCalculator weekCalculator = new WeekCalculatorLMP(year, month, day);
+            weekCalculator = new WeekCalculatorLMP(year, month, day);
             switch (selectedType) {
                 case 0:
                     weekCalculator = new WeekCalculatorLMP(year, month, day);
@@ -88,6 +111,9 @@ public class MainActivity extends AppCompatActivity {
                 openWeekSelectionFragment();
                 break;
             case R.id.action_settings_reset_week:
+                WeeklyNotification.cancelAlarm(this, AlarmReceiver.class);
+
+                //Set week date preferences to 0
                 SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
                 editor.putInt("year", 0);
                 editor.putInt("month", 0);
@@ -103,7 +129,8 @@ public class MainActivity extends AppCompatActivity {
         if (instanceState == null) {
             WeekSelectionFragment fragment = new WeekSelectionFragment();
             fragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.constraintLayout, fragment, "week_select").commit();
+            getSupportFragmentManager().beginTransaction().addToBackStack(null)
+                    .replace(R.id.constraintLayout, fragment, "week_select").commit();
         }
     }
 
@@ -124,4 +151,8 @@ public class MainActivity extends AppCompatActivity {
             weekListDialogFragment.dismiss();
     }
 
+    @Override
+    public void setNotification(WeekCalculator weekCalculator) {
+        WeeklyNotification.setAlarmManager(this, AlarmReceiver.class, weekCalculator);
+    }
 }

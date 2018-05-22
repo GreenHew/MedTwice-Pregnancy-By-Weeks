@@ -1,6 +1,7 @@
 package com.example.matthew.pregnancybyweeksapp.week_calculator;
 
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -22,12 +23,15 @@ import com.example.matthew.pregnancybyweeksapp.WeekVideoAndDescriptionFragment;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import static android.content.ContentValues.TAG;
+
 public class WeekSelectionFragment extends android.support.v4.app.Fragment implements View.OnClickListener{
     private static final String[] selectionModes = {"Last Menstrual Period (LMP)", "Conception Date", "Projected Due Date"};
     DatePicker datePicker;
     WeekCalculator weekCalculator;
     TextView invalidText;
     Spinner spinner;
+    OnAcceptClickListener onAcceptClickListener;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -87,13 +91,22 @@ public class WeekSelectionFragment extends android.support.v4.app.Fragment imple
             @Override
             public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 WeekCalculator weekCalculator1 = getWeekCalculator(year, monthOfYear, dayOfMonth, spinner.getSelectedItemPosition());
-                weekCalculator1.setWeek(year, monthOfYear + 1, dayOfMonth);
                 String text = weekCalculator1.getCurrentWeek() + "";
                 currentWeekView.setText(text);
             }
         });
 
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            onAcceptClickListener = (OnAcceptClickListener) context;
+        } catch (ClassCastException e) {
+            Log.e(TAG, "onAttach: Activity doesn't implement OnAcceptClickListener", e);
+        }
     }
 
     private WeekCalculator getWeekCalculator(int year, int month, int day, int selectionType) {
@@ -111,6 +124,10 @@ public class WeekSelectionFragment extends android.support.v4.app.Fragment imple
         return weekCalculator;
     }
 
+    public interface OnAcceptClickListener {
+        void setNotification(WeekCalculator weekCalculator);
+    }
+
     //Accept button onClick
     //if date is between 4 and 41 then saves the selected date and type then opens corresponding week fragment
     @Override
@@ -120,6 +137,8 @@ public class WeekSelectionFragment extends android.support.v4.app.Fragment imple
             return;
         }
         invalidText.setText("");
+
+        //Save user current week preferences
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this.getActivity()).edit();
         editor.putInt("year", datePicker.getYear());
         editor.putInt("month", datePicker.getMonth());
@@ -127,6 +146,9 @@ public class WeekSelectionFragment extends android.support.v4.app.Fragment imple
         editor.putInt("selection type", spinner.getSelectedItemPosition());
         editor.apply();
 
+        onAcceptClickListener.setNotification(weekCalculator);
+
+        //Open current week fragment
         WeekVideoAndDescriptionFragment fragment = new WeekVideoAndDescriptionFragment();
         Bundle bundle = new Bundle();
         bundle.putInt("weekNum", weekCalculator.getCurrentWeek());

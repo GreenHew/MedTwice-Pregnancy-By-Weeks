@@ -1,6 +1,7 @@
 package com.example.matthew.pregnancybyweeksapp.week_calculator;
 
 import java.time.LocalDate;
+import java.util.Calendar;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
@@ -17,5 +18,23 @@ public class WeekCalculatorConception extends WeekCalculator{
         int week = (int) (DAYS.between(dateLMP, currentDate) / 7) - 2;
         setCurrentWeek(week);
         return week;
+    }
+
+    @Override
+    public int daysUntilNextWeek() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(getYear(), getMonth(), getDay());
+        WeekCalculatorConception nextWeekCalculator;
+        int i = 1;
+        for (; i <= 7; i++) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            nextWeekCalculator = new WeekCalculatorConception(
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH));
+            if (nextWeekCalculator.getCurrentWeek() > getCurrentWeek())
+                break;
+        }
+        return i;
     }
 }
