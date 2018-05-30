@@ -8,5 +8,11 @@
     <item
         android:id="@+id/action_settings_reset_week"
         android:title="@string/reset_week"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_settings_notifications"
+        android:title="@string/notifications_enabled"
+        android:checkable="true"
+        app:actionLayout="@layout/menu_switch"
         app:showAsAction="never"/>
 </menu>

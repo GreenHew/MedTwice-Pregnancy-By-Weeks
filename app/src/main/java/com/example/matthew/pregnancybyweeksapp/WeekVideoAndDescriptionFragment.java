@@ -59,6 +59,10 @@ public class WeekVideoAndDescriptionFragment extends android.support.v4.app.Frag
 
         bodyText = view.findViewById(R.id.bodyTextView);
 
+        return view;
+    }
+
+    private void createYoutubeView() {
         youTubePlayerSupportFragment = YouTubePlayerSupportFragment.newInstance();
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.replace(R.id.frameLayout, youTubePlayerSupportFragment).commit();
@@ -67,6 +71,7 @@ public class WeekVideoAndDescriptionFragment extends android.support.v4.app.Frag
             @Override
             public void onInitializationSuccess(YouTubePlayer.Provider provider, final YouTubePlayer youTubePlayer, boolean b) {
                 youTubePlayer.loadVideo(youTubeSig);
+                youTubePlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION | YouTubePlayer.FULLSCREEN_FLAG_ALWAYS_FULLSCREEN_IN_LANDSCAPE);
                 youTubePlayer.setPlaybackEventListener(new YouTubePlayer.PlaybackEventListener() {
                     private boolean interceptPlay = true;
                     @Override
@@ -104,7 +109,6 @@ public class WeekVideoAndDescriptionFragment extends android.support.v4.app.Frag
 
             }
         };
-        return view;
     }
 
     static private class HtmlParseTask extends AsyncTask<Integer, Integer, HtmlParser> {
@@ -128,19 +132,23 @@ public class WeekVideoAndDescriptionFragment extends android.support.v4.app.Frag
         }
 
         protected void onPostExecute(HtmlParser result) {
-            WeekVideoAndDescriptionFragment fragment = contextWeakReference.get();
+            WeekVideoAndDescriptionFragment weakFragment = contextWeakReference.get();
 
             StringBuilder body = new StringBuilder();
             for (String p : result.getParagraphs()) {
                 body.append(p);
                 body.append("\n\n");
             }
-            fragment.youTubeSig = result.getYouTubeSignature();
-            fragment.bodyText.setText(body.toString());
-            fragment.setHelpfulLinks(result.getHelpfulLinks(), result.getHelpfulLinkTitles());
-            if (!fragment.isWeekVideo)
-                fragment.welcomeText.setText(result.getPageTitle());
-            fragment.youTubePlayerSupportFragment.initialize(YouTubeConfig.getApiKey(), fragment.onInitializedListener);
+            weakFragment.youTubeSig = result.getYouTubeSignature();
+
+            weakFragment.bodyText.setText(body.toString());
+            weakFragment.setHelpfulLinks(result.getHelpfulLinks(), result.getHelpfulLinkTitles());
+            if (!weakFragment.isWeekVideo)
+                weakFragment.welcomeText.setText(result.getPageTitle());
+            if (weakFragment.youTubeSig != null) {
+                weakFragment.createYoutubeView();
+                weakFragment.youTubePlayerSupportFragment.initialize(YouTubeConfig.getApiKey(), weakFragment.onInitializedListener);
+            }
         }
     }
 

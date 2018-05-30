@@ -1,21 +1,12 @@
 package com.example.matthew.pregnancybyweeksapp;
 
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
 import android.app.FragmentManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,6 +17,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toolbar.LayoutParams;
 
+import com.example.matthew.pregnancybyweeksapp.notifications.AlarmReceiver;
+import com.example.matthew.pregnancybyweeksapp.notifications.WeeklyNotification;
 import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekCalculator;
 import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorConception;
 import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorDueDate;
@@ -33,7 +26,6 @@ import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorLMP
 import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekSelectionFragment;
 import com.example.matthew.pregnancybyweeksapp.week_menu.WeekListDialogFragment;
 
-import java.util.Calendar;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements WeekSelectionFragment.OnAcceptClickListener {
@@ -70,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements WeekSelectionFrag
         parent.getContext().setTheme(R.style.CustomPopupStyle);
         parent.setContentInsetsAbsolute(0,0);
 
+        //Get saved week preferences and open corresponding week
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         int year = preferences.getInt("year", 0);
         int month = preferences.getInt("month", 0);
@@ -101,11 +94,17 @@ public class MainActivity extends AppCompatActivity implements WeekSelectionFrag
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean notifications_enabled = preferences.getBoolean("Notifications Enabled", true);
+        MenuItem menuItem = menu.getItem(2);
+        menuItem.setChecked(notifications_enabled);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         switch(item.getItemId()) {
             case R.id.action_settings_set_week:
                 openWeekSelectionFragment();
@@ -114,24 +113,32 @@ public class MainActivity extends AppCompatActivity implements WeekSelectionFrag
                 WeeklyNotification.cancelAlarm(this, AlarmReceiver.class);
 
                 //Set week date preferences to 0
-                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
                 editor.putInt("year", 0);
                 editor.putInt("month", 0);
                 editor.putInt("day", 0);
                 editor.putInt("selection type", 0);
                 editor.apply();
                 openWeekSelectionFragment();
+            case R.id.action_settings_notifications:
+                if (item.isChecked()) {
+                    WeeklyNotification.cancelAlarm(this, AlarmReceiver.class);
+                    editor.putBoolean("Notifications Enabled", false);
+                    item.setChecked(false);
+                } else {
+                    WeeklyNotification.setAlarmManager(this, AlarmReceiver.class, weekCalculator);
+                    editor.putBoolean("Notifications Enabled", true);
+                    item.setChecked(true);
+                }
+                editor.apply();
         }
         return super.onOptionsItemSelected(item);
     }
 
     public void openWeekSelectionFragment() {
-        if (instanceState == null) {
-            WeekSelectionFragment fragment = new WeekSelectionFragment();
-            fragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().addToBackStack(null)
-                    .replace(R.id.constraintLayout, fragment, "week_select").commit();
-        }
+        WeekSelectionFragment fragment = new WeekSelectionFragment();
+        fragment.setArguments(getIntent().getExtras());
+        getSupportFragmentManager().beginTransaction().addToBackStack(null)
+                .replace(R.id.constraintLayout, fragment, "week_select").commit();
     }
 
     public void onMenuClick(View view) {

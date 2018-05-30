@@ -19,4 +19,6 @@
     <string name="reset_week">Reset Week</string>
     <string name="first_trimester">First Trimester</string>
     <string name="menu_showing_all_weeks_available">Menu showing all weeks available</string>
+    <string name="disable_notifications">Disable Notifications</string>
+    <string name="notifications_enabled">Notifications Enabled</string>
 </resources>

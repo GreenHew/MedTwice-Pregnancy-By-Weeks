@@ -46,15 +46,17 @@ public class HtmlParser {
                     extractYouTubeSignature(paragraph);
                 else if (paragraph.contains("<a title=") && isPBW)
                     extractHelpfulLink(paragraph);
+                else if (paragraph.contains(">Continue<"))
+                    extractListPageLink(paragraph);
                 //Get rid of unwanted paragraphs from link
-                else if (paragraph.contains("\"http://medtwice.com/\"")
-                        || paragraph.contains("Medical Videos By Real Doctors")
-                        || paragraph.equals("")
-                        || paragraph.contains("Helpful Links")
-                        || paragraph.contains("class=\"")) {
-                }
-                else
+                else if (!paragraph.contains("\"http://medtwice.com/\"")
+                        && !paragraph.contains("Medical Videos By Real Doctors")
+                        && !paragraph.equals("")
+                        && !paragraph.contains("Helpful Links")
+                        && !paragraph.contains("medtwice@gmail.com")
+                        && !paragraph.contains("\"footer-text\"")) {
                     extractTextParagraph(paragraph);
+                }
             }
             Log.i("parse", "parse finished " + link);
     }
@@ -66,6 +68,15 @@ public class HtmlParser {
     private void extractHelpfulLink(String paragraph) {
         helpfulLinkTitles.add(StringUtils.substringBetween(paragraph, "title=\"","\""));
         helpfulLinks.add(StringUtils.substringBetween(paragraph, "href=\"", "\""));
+    }
+
+    private void extractListPageLink(String paragraph) throws IOException {
+        String link = StringUtils.substringBetween(paragraph, "href=\"", "/\"");
+        String title = StringUtils.substringAfter(link, "http://medtwice.com/");
+        title = title.replace("-", " ");
+        title = StringUtils.capitalize(title);
+        helpfulLinkTitles.add(title);
+        helpfulLinks.add(link);
     }
 
     private void extractTextParagraph(String paragraph) {
@@ -99,7 +110,7 @@ public class HtmlParser {
             StringBuilder text = new StringBuilder();
             String link;
             String linkTitle;
-            while (paragraph.contains("href=\"")) {
+            while (paragraph.contains("<a href=\"")) {
                 text.append(StringUtils.substringBefore(paragraph, "<a href=\""));
                 link = StringUtils.substringBetween(paragraph, "href=\"", "\">");
                 linkTitle = StringUtils.substringBetween(paragraph, "\">", "</a>");

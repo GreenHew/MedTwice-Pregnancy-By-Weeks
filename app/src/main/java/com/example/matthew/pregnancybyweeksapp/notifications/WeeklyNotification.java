@@ -1,4 +1,4 @@
-package com.example.matthew.pregnancybyweeksapp;
+package com.example.matthew.pregnancybyweeksapp.notifications;
 
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
@@ -12,6 +12,9 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
+import com.example.matthew.pregnancybyweeksapp.MainActivity;
+import com.example.matthew.pregnancybyweeksapp.R;
+import com.example.matthew.pregnancybyweeksapp.notifications.AlarmReceiver;
 import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekCalculator;
 
 import java.util.Calendar;
@@ -23,7 +26,7 @@ public class WeeklyNotification {
     public static void setAlarmManager(Context context, Class<?> cls, WeekCalculator weekCalculator) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.add(Calendar.DAY_OF_MONTH, weekCalculator.daysUntilNextWeek());
+        calendar.add(Calendar.DAY_OF_MONTH, weekCalculator.getDaysUntilNextWeek());
         calendar.set(Calendar.HOUR_OF_DAY, 6);
 
         //cancel previous alarms
@@ -79,7 +82,7 @@ public class WeeklyNotification {
             NotificationCompat.Builder noteBuilder = new NotificationCompat.Builder(context, "Week Notification")
                     .setContentTitle("MedTwice Pregnancy by Weeks")
                     .setContentText("You have reached week  " + week + ". New video available.")
-                    .setSmallIcon(R.mipmap.calendar_icon_round)
+                    .setSmallIcon(R.drawable.notification_icon)
                     .setContentIntent(pendingIntent)
                     .setPriority(NotificationCompat.PRIORITY_LOW)
                     .setDefaults(NotificationCompat.DEFAULT_ALL)
