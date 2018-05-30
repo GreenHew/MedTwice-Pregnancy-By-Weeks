@@ -13,6 +13,21 @@
                       <PersistentState>
                         <option name="children">
                           <map>
+                            <entry key="actionbar">
+                              <value>
+                                <PersistentState>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="imageAsset" value="C:\Users\Matthew\Desktop\CS\Android\Icons\baseline_menu_black_48dp.png" />
+                                      <entry key="outputName" value="ic_menu_black" />
+                                      <entry key="theme" value="CUSTOM" />
+                                      <entry key="themeColor" value="000000" />
+                                    </map>
+                                  </option>
+                                </PersistentState>
+                              </value>
+                            </entry>
                             <entry key="launcher">
                               <value>
                                 <PersistentState>
@@ -51,7 +66,7 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="C:\Users\Matthew\Downloads\medtwice images\medtwice\Favicon.png" />
+                                      <entry key="imageAsset" value="C:\Users\Matthew\Desktop\CS\Android\Icons\baseline_menu_black_18dp.png" />
                                       <entry key="outputName" value="notification_icon" />
                                     </map>
                                   </option>
@@ -62,7 +77,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputIconType" value="NOTIFICATION" />
+                            <entry key="outputIconType" value="ACTIONBAR" />
                           </map>
                         </option>
                       </PersistentState>

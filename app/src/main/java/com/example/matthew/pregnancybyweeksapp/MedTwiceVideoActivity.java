@@ -1,7 +1,9 @@
 package com.example.matthew.pregnancybyweeksapp;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
 import java.util.Objects;
@@ -13,8 +15,11 @@ public class MedTwiceVideoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.medtwice_activity);
 
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar2);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        Objects.requireNonNull(actionBar).setDisplayHomeAsUpEnabled(true);
+        actionBar.setBackgroundDrawable(new ColorDrawable(0xff00DDED));
 
         Intent intent = getIntent();
         String link = intent.getStringExtra("link");
@@ -26,7 +31,7 @@ public class MedTwiceVideoActivity extends AppCompatActivity {
             bundle.putString("title", title);
             fragment.setArguments(bundle);
             android.support.v4.app.FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.medTwiceConstraint, fragment);
+            transaction.replace(R.id.medtwiceFrame, fragment);
             transaction.addToBackStack(null);
             transaction.commit();
         }

@@ -154,7 +154,7 @@ public class WeekSelectionFragment extends android.support.v4.app.Fragment imple
         bundle.putInt("weekNum", weekCalculator.getCurrentWeek());
         fragment.setArguments(bundle);
         android.support.v4.app.FragmentTransaction transaction = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.constraintLayout, fragment);
+        transaction.replace(R.id.content_frame, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
 

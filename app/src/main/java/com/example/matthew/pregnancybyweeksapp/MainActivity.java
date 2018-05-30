@@ -1,21 +1,23 @@
 package com.example.matthew.pregnancybyweeksapp;
 
-import android.annotation.SuppressLint;
-import android.app.FragmentManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toolbar.LayoutParams;
+import android.view.SubMenu;
 
 import com.example.matthew.pregnancybyweeksapp.notifications.AlarmReceiver;
 import com.example.matthew.pregnancybyweeksapp.notifications.WeeklyNotification;
@@ -24,16 +26,18 @@ import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorCon
 import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorDueDate;
 import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorLMP;
 import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekSelectionFragment;
-import com.example.matthew.pregnancybyweeksapp.week_menu.WeekListDialogFragment;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements WeekSelectionFragment.OnAcceptClickListener {
 
-    WeekListDialogFragment weekListDialogFragment;
     Bundle instanceState;
     NotificationManager notificationManager;
     WeekCalculator weekCalculator;
+    NavigationView navigationView;
+    DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,19 +52,38 @@ public class MainActivity extends AppCompatActivity implements WeekSelectionFrag
                             "NotificationEx", "NotificationEx",
                             NotificationManager.IMPORTANCE_DEFAULT));
 
-        //Inflate and setup custom action bar
-        LayoutInflater layoutInflater = LayoutInflater.from(this);
-        @SuppressLint("InflateParams") View view = layoutInflater.inflate(R.layout.custom_action_bar, null);
-        Objects.requireNonNull(getSupportActionBar()).setHomeButtonEnabled(false);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        //Set toolbar and add drawer button
+        android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        Objects.requireNonNull(actionBar).setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black);
+        actionBar.setBackgroundDrawable(new ColorDrawable(0xff00DDED));
 
-        //Set action bar and fill parent
-        ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        getSupportActionBar().setCustomView(view, layoutParams);
-        android.support.v7.widget.Toolbar parent = (android.support.v7.widget.Toolbar) view.getParent();
-        parent.getContext().setTheme(R.style.CustomPopupStyle);
-        parent.setContentInsetsAbsolute(0,0);
+        //Initialize navigation drawer and set submenus and items
+        navigationView = findViewById(R.id.nav_view);
+        final Menu menu = navigationView.getMenu();
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        int weekNum = Integer.parseInt(StringUtils.substringAfter(item.getTitle().toString(), " "));
+                        openWeekVideoFragment(weekNum);
+                        drawerLayout.closeDrawer(Gravity.START);
+                        return true;
+                    }
+                });
+        SubMenu subMenu = menu.addSubMenu("\tFirst Trimester");
+        for (int i = 4; i <= 41; i++) {
+            if (i == 13)
+                subMenu = menu.addSubMenu("\tSecond Trimester");
+            else if (i == 25)
+                subMenu = menu.addSubMenu("\tThird Trimester");
+            subMenu.add("\t\t\t\tWeek " + i);
+        }
+
+
 
         //Get saved week preferences and open corresponding week
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -130,6 +153,8 @@ public class MainActivity extends AppCompatActivity implements WeekSelectionFrag
                     item.setChecked(true);
                 }
                 editor.apply();
+            case android.R.id.home:
+                drawerLayout.openDrawer(GravityCompat.START);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -138,14 +163,9 @@ public class MainActivity extends AppCompatActivity implements WeekSelectionFrag
         WeekSelectionFragment fragment = new WeekSelectionFragment();
         fragment.setArguments(getIntent().getExtras());
         getSupportFragmentManager().beginTransaction().addToBackStack(null)
-                .replace(R.id.constraintLayout, fragment, "week_select").commit();
+                .replace(R.id.content_frame, fragment, "week_select").commit();
     }
 
-    public void onMenuClick(View view) {
-        FragmentManager fragmentManager = getFragmentManager();
-        weekListDialogFragment = WeekListDialogFragment.newInstance();
-        weekListDialogFragment.show(fragmentManager, "weeks");
-    }
 
     public void openWeekVideoFragment(int weekNum) {
         WeekVideoAndDescriptionFragment fragment = new WeekVideoAndDescriptionFragment();
@@ -153,9 +173,7 @@ public class MainActivity extends AppCompatActivity implements WeekSelectionFrag
         bundle.putInt("weekNum", weekNum);
         fragment.setArguments(bundle);
         android.support.v4.app.FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.constraintLayout, fragment).addToBackStack(null).commit();
-        if (weekListDialogFragment != null)
-            weekListDialogFragment.dismiss();
+        transaction.replace(R.id.content_frame, fragment).addToBackStack(null).commit();
     }
 
     @Override
