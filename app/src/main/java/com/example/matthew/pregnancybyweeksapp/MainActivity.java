@@ -18,6 +18,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.example.matthew.pregnancybyweeksapp.notifications.AlarmReceiver;
 import com.example.matthew.pregnancybyweeksapp.notifications.WeeklyNotification;
@@ -56,9 +58,16 @@ public class MainActivity extends AppCompatActivity implements WeekSelectionFrag
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
+        toolbar.setPopupTheme(R.style.CustomPopupStyle);
         Objects.requireNonNull(actionBar).setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black);
-        actionBar.setBackgroundDrawable(new ColorDrawable(0xff00DDED));
+        actionBar.setBackgroundDrawable(new ColorDrawable(getColor(R.color.colorPrimary)));
+
+        //Set status bar color
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(getColor(R.color.colorPrimaryDark));
 
         //Initialize navigation drawer and set submenus and items
         navigationView = findViewById(R.id.nav_view);

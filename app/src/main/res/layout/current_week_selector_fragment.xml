@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@color/colorAccent"
     tools:context=".week_calculator.WeekSelectionFragment">
 
     <android.support.constraint.ConstraintLayout

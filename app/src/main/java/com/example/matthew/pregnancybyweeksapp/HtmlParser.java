@@ -18,21 +18,23 @@ public class HtmlParser {
     private ArrayList<String> helpfulLinkTitles = new ArrayList<>();
     private ArrayList<String> helpfulLinks = new ArrayList<>();
     private String pageTitle;
+    public Boolean parseFailed = false;
 
-    HtmlParser(int weekNum) throws IOException {
+    HtmlParser(int weekNum) {
         long millis = System.currentTimeMillis();
         String link = "http://medtwice.com/pregnancy-by-weeks-week-" +  weekNum + "/";
         parseData(link);
         Log.i("parse time", System.currentTimeMillis() - millis + "");
     }
 
-    HtmlParser(String link) throws IOException {
+    HtmlParser(String link) {
         if (link.equals("http://medtwice.com/labs-during-first-prenatal-visit/"))
             Log.i("broken link", "link is ok");
         parseData(link);
     }
 
-    private void parseData(final String link) throws IOException {
+    private void parseData(final String link) {
+        try {
             Document document = Jsoup.connect(link).get();
             Log.i("parse start", "parse started " + link);
             Elements rawParagraphs = document.select("p");
@@ -59,6 +61,10 @@ public class HtmlParser {
                 }
             }
             Log.i("parse", "parse finished " + link);
+        } catch (IOException e) {
+            e.printStackTrace();
+            parseFailed = true;
+        }
     }
 
     private void extractYouTubeSignature(String paragraph) {
@@ -123,7 +129,9 @@ public class HtmlParser {
             paragraphText = text.toString();
         } else
             paragraphText = paragraph;
-        paragraphs.add(removeTextJunk(paragraphText));
+        paragraphText = removeTextJunk(paragraphText);
+        if (!paragraphText.equals(""))
+            paragraphs.add(paragraphText);
     }
 
     private void extractPageTitle(String title) {
@@ -134,6 +142,8 @@ public class HtmlParser {
         text = StringUtils.remove(text, "&nbsp;");
         text = StringUtils.remove(text, "<em>");
         text = StringUtils.remove(text, "</em>");
+        text = StringUtils.remove(text, "amp;");
+        text = StringUtils.remove(text, "\n");
         return text;
     }
 

@@ -5,6 +5,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Window;
+import android.view.WindowManager;
 
 import java.util.Objects;
 
@@ -19,7 +21,13 @@ public class MedTwiceVideoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         Objects.requireNonNull(actionBar).setDisplayHomeAsUpEnabled(true);
-        actionBar.setBackgroundDrawable(new ColorDrawable(0xff00DDED));
+        actionBar.setBackgroundDrawable(new ColorDrawable(getColor(R.color.colorPrimary)));
+
+        //Set status bar color
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(getColor(R.color.colorPrimaryDark));
 
         Intent intent = getIntent();
         String link = intent.getStringExtra("link");
@@ -31,7 +39,7 @@ public class MedTwiceVideoActivity extends AppCompatActivity {
             bundle.putString("title", title);
             fragment.setArguments(bundle);
             android.support.v4.app.FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.medtwiceFrame, fragment);
+            transaction.replace(R.id.medTwiceFrame, fragment);
             transaction.addToBackStack(null);
             transaction.commit();
         }
