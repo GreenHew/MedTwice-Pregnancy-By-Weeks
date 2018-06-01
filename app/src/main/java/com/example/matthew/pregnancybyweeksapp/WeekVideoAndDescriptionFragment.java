@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
@@ -23,7 +26,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class WeekVideoAndDescriptionFragment extends android.support.v4.app.Fragment {
+public class WeekVideoAndDescriptionFragment extends android.support.v4.app.Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     YouTubePlayerSupportFragment youTubePlayerSupportFragment;
     YouTubePlayer.OnInitializedListener onInitializedListener;
@@ -35,6 +38,7 @@ public class WeekVideoAndDescriptionFragment extends android.support.v4.app.Frag
     String link;
     boolean isWeekVideo = true;
     View view;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,6 +57,11 @@ public class WeekVideoAndDescriptionFragment extends android.support.v4.app.Frag
         }
 
         welcomeText.requestFocus();
+
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setProgressViewOffset(true, 0, 200);
+        swipeRefreshLayout.setRefreshing(true);
 
         parseTask = new HtmlParseTask(this);
         parseTask.execute();
@@ -111,6 +120,12 @@ public class WeekVideoAndDescriptionFragment extends android.support.v4.app.Frag
         };
     }
 
+    @Override
+    public void onRefresh() {
+        parseTask = new HtmlParseTask(this);
+        parseTask.execute();
+    }
+
     static private class HtmlParseTask extends AsyncTask<Integer, Integer, HtmlParser> {
         private WeakReference<WeekVideoAndDescriptionFragment> contextWeakReference;
         HtmlParseTask(WeekVideoAndDescriptionFragment context) {
@@ -119,20 +134,22 @@ public class WeekVideoAndDescriptionFragment extends android.support.v4.app.Frag
         @Override
         protected HtmlParser doInBackground(Integer... integers) {
             WeekVideoAndDescriptionFragment fragment = contextWeakReference.get();
-            HtmlParser htmlParser = null;
-            try {
-                if (fragment.isWeekVideo)
-                    htmlParser = new HtmlParser(fragment.weekNum);
-                else
-                    htmlParser = new HtmlParser(fragment.link);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            HtmlParser htmlParser;
+            if (fragment.isWeekVideo)
+                htmlParser = new HtmlParser(fragment.weekNum);
+            else
+                htmlParser = new HtmlParser(fragment.link);
             return htmlParser;
         }
 
         protected void onPostExecute(HtmlParser result) {
             WeekVideoAndDescriptionFragment weakFragment = contextWeakReference.get();
+
+            if (result.parseFailed) {
+                weakFragment.connectionFailed();
+                weakFragment.swipeRefreshLayout.setRefreshing(false);
+                return;
+            }
 
             StringBuilder body = new StringBuilder();
             for (String p : result.getParagraphs()) {
@@ -149,7 +166,12 @@ public class WeekVideoAndDescriptionFragment extends android.support.v4.app.Frag
                 weakFragment.createYoutubeView();
                 weakFragment.youTubePlayerSupportFragment.initialize(YouTubeConfig.getApiKey(), weakFragment.onInitializedListener);
             }
+            weakFragment.swipeRefreshLayout.setRefreshing(false);
         }
+    }
+
+    private void connectionFailed() {
+        Toast.makeText(getContext(), "Connection failed.", Toast.LENGTH_LONG).show();
     }
 
     private void setHelpfulLinks(final ArrayList<String> links, final ArrayList<String> titles) {

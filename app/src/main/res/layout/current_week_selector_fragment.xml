@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@color/colorAccent"
     tools:context=".week_calculator.WeekSelectionFragment">
 
     <android.support.constraint.ConstraintLayout
@@ -15,6 +16,7 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginBottom="32dp"
+            android:layout_marginTop="16dp"
             android:text="@string/estimate_current_week"
             android:textAlignment="center"
             android:textAllCaps="false"
