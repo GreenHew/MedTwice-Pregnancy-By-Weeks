@@ -3,9 +3,14 @@ package com.example.matthew.pregnancybyweeksapp.week_calculator;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.FontRequest;
+import android.provider.FontsContract;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +42,7 @@ public class WeekSelectionFragment extends android.support.v4.app.Fragment imple
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.current_week_selector_fragment, container, false);
 
-        final TextView currentWeekView = view.findViewById(R.id.currentWeekView);
+        final TextView currentWeekView = view.findViewById(R.id.weekNumText);
         invalidText = view.findViewById(R.id.invalidWeekTextView);
         datePicker = view.findViewById(R.id.datePicker);
 
@@ -58,7 +63,25 @@ public class WeekSelectionFragment extends android.support.v4.app.Fragment imple
 
         //Initialize selection type spinner and set on item selected listener
         spinner = (Spinner) Objects.requireNonNull(view.findViewById(R.id.estimationMode));
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(Objects.requireNonNull(this.getActivity()), android.R.layout.simple_spinner_dropdown_item, selectionModes);
+        ArrayAdapter adapter = new ArrayAdapter<String>(Objects.requireNonNull(this.getActivity()), android.R.layout.simple_spinner_dropdown_item, selectionModes) {
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                //Change spinner font
+                View view = super.getView(position, convertView, parent);
+                final TextView textView = view.findViewById(android.R.id.text1);
+                FontRequest fontRequest = new FontRequest("com.google.android.gms.fonts", "com.google.android.gms", "Open Sans");
+                FontsContract.FontRequestCallback callback = new FontsContract.FontRequestCallback() {
+                    @Override
+                    public void onTypefaceRetrieved(Typeface typeface) {
+                        textView.setTypeface(typeface);
+                    }
+                };
+                Handler handler = new Handler();
+                FontsContract.requestFonts(getContext(), fontRequest, handler, null, callback);
+                return view;
+            }
+        };
         spinner.setAdapter(adapter);
         spinner.setSelection(selectedType);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

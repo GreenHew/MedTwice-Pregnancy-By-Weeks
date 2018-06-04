@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import java.util.Objects;
 
 public class MedTwiceVideoActivity extends AppCompatActivity {
+    WeekVideoAndDescriptionFragment weekVideoAndDescriptionFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +21,7 @@ public class MedTwiceVideoActivity extends AppCompatActivity {
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
+        Objects.requireNonNull(actionBar).setTitle(null);
         Objects.requireNonNull(actionBar).setDisplayHomeAsUpEnabled(true);
         actionBar.setBackgroundDrawable(new ColorDrawable(getColor(R.color.colorPrimary)));
 
@@ -33,13 +35,13 @@ public class MedTwiceVideoActivity extends AppCompatActivity {
         String link = intent.getStringExtra("link");
         String title = intent.getStringExtra("title");
         if (link != null) {
-            WeekVideoAndDescriptionFragment fragment = new WeekVideoAndDescriptionFragment();
+            weekVideoAndDescriptionFragment = new WeekVideoAndDescriptionFragment();
             Bundle bundle = new Bundle();
             bundle.putString("link", link);
             bundle.putString("title", title);
-            fragment.setArguments(bundle);
+            weekVideoAndDescriptionFragment.setArguments(bundle);
             android.support.v4.app.FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.medTwiceFrame, fragment);
+            transaction.replace(R.id.medTwiceFrame, weekVideoAndDescriptionFragment);
             transaction.addToBackStack(null);
             transaction.commit();
         }
@@ -47,7 +49,10 @@ public class MedTwiceVideoActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        this.finish();
+        if (weekVideoAndDescriptionFragment != null && weekVideoAndDescriptionFragment.fullScreen)
+            weekVideoAndDescriptionFragment.videoPlayer.setFullscreen(false);
+        else
+            this.finish();
     }
 
     @Override

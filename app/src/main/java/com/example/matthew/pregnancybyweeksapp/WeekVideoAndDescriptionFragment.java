@@ -1,9 +1,17 @@
 package com.example.matthew.pregnancybyweeksapp;
 
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
+import android.provider.FontRequest;
+import android.provider.FontsContract;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -17,6 +25,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
@@ -39,6 +49,9 @@ public class WeekVideoAndDescriptionFragment extends android.support.v4.app.Frag
     boolean isWeekVideo = true;
     View view;
     SwipeRefreshLayout swipeRefreshLayout;
+    Boolean fullScreen = false;
+    YouTubePlayer videoPlayer;
+    AdView adView;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,6 +70,8 @@ public class WeekVideoAndDescriptionFragment extends android.support.v4.app.Frag
         }
 
         welcomeText.requestFocus();
+
+        adView = view.findViewById(R.id.adView);
 
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -79,6 +94,7 @@ public class WeekVideoAndDescriptionFragment extends android.support.v4.app.Frag
         onInitializedListener = new YouTubePlayer.OnInitializedListener() {
             @Override
             public void onInitializationSuccess(YouTubePlayer.Provider provider, final YouTubePlayer youTubePlayer, boolean b) {
+                videoPlayer = youTubePlayer;
                 youTubePlayer.loadVideo(youTubeSig);
                 youTubePlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION | YouTubePlayer.FULLSCREEN_FLAG_ALWAYS_FULLSCREEN_IN_LANDSCAPE);
                 youTubePlayer.setPlaybackEventListener(new YouTubePlayer.PlaybackEventListener() {
@@ -109,6 +125,12 @@ public class WeekVideoAndDescriptionFragment extends android.support.v4.app.Frag
                     @Override
                     public void onSeekTo(int i) {
 
+                    }
+                });
+                youTubePlayer.setOnFullscreenListener(new YouTubePlayer.OnFullscreenListener() {
+                    @Override
+                    public void onFullscreen(boolean b) {
+                        fullScreen = b;
                     }
                 });
             }
@@ -160,6 +182,11 @@ public class WeekVideoAndDescriptionFragment extends android.support.v4.app.Frag
 
             weakFragment.bodyText.setText(body.toString());
             weakFragment.setHelpfulLinks(result.getHelpfulLinks(), result.getHelpfulLinkTitles());
+            AdRequest adRequest = new AdRequest.Builder()
+                    .addKeyword("pregnant")
+                    .addKeyword("pregnancy")
+                    .build();
+            weakFragment.adView.loadAd(adRequest);
             if (!weakFragment.isWeekVideo)
                 weakFragment.welcomeText.setText(result.getPageTitle());
             if (weakFragment.youTubeSig != null) {
@@ -177,8 +204,25 @@ public class WeekVideoAndDescriptionFragment extends android.support.v4.app.Frag
     private void setHelpfulLinks(final ArrayList<String> links, final ArrayList<String> titles) {
 
         ListView listView = view.findViewById(R.id.helpfulLinks);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(Objects.requireNonNull(getActivity()),
-                android.R.layout.simple_list_item_1, titles);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(Objects.requireNonNull(getActivity()),
+                android.R.layout.simple_list_item_1, titles) {
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                final TextView textView = view.findViewById(android.R.id.text1);
+                FontRequest fontRequest = new FontRequest("com.google.android.gms.fonts", "com.google.android.gms", "Open Sans");
+                FontsContract.FontRequestCallback callback = new FontsContract.FontRequestCallback() {
+                    @Override
+                    public void onTypefaceRetrieved(Typeface typeface) {
+                        textView.setTypeface(typeface);
+                    }
+                };
+                Handler handler = new Handler();
+                FontsContract.requestFonts(getContext(), fontRequest, handler, null, callback);
+                return view;
+            }
+        };
 
         TextView helpfulLinksTextView = view.findViewById(R.id.helpfulLinksTextView);
         if (links.size() > 0)
@@ -220,4 +264,18 @@ public class WeekVideoAndDescriptionFragment extends android.support.v4.app.Frag
         listView.setLayoutParams(params);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (videoPlayer != null &&
+                Objects.requireNonNull(getActivity()).getResources().getConfiguration().orientation
+                == Configuration.ORIENTATION_PORTRAIT)
+            videoPlayer.setFullscreen(false);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        parseTask.cancel(true);
+    }
 }

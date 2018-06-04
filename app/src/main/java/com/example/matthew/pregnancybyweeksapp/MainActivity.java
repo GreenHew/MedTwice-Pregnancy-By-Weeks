@@ -28,6 +28,7 @@ import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorCon
 import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorDueDate;
 import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorLMP;
 import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekSelectionFragment;
+import com.google.android.gms.ads.MobileAds;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -40,12 +41,14 @@ public class MainActivity extends AppCompatActivity implements WeekSelectionFrag
     WeekCalculator weekCalculator;
     NavigationView navigationView;
     DrawerLayout drawerLayout;
+    WeekVideoAndDescriptionFragment weekVideoAndDescriptionFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         instanceState = savedInstanceState;
+        MobileAds.initialize(this, "ca-app-pub-1925319439423876~2819745476");
 
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
@@ -59,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements WeekSelectionFrag
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         toolbar.setPopupTheme(R.style.CustomPopupStyle);
+        Objects.requireNonNull(actionBar).setTitle(null);
         Objects.requireNonNull(actionBar).setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black);
         actionBar.setBackgroundDrawable(new ColorDrawable(getColor(R.color.colorPrimary)));
@@ -151,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements WeekSelectionFrag
                 editor.putInt("selection type", 0);
                 editor.apply();
                 openWeekSelectionFragment();
+                break;
             case R.id.action_settings_notifications:
                 if (item.isChecked()) {
                     WeeklyNotification.cancelAlarm(this, AlarmReceiver.class);
@@ -162,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements WeekSelectionFrag
                     item.setChecked(true);
                 }
                 editor.apply();
+                break;
             case android.R.id.home:
                 drawerLayout.openDrawer(GravityCompat.START);
         }
@@ -177,16 +183,24 @@ public class MainActivity extends AppCompatActivity implements WeekSelectionFrag
 
 
     public void openWeekVideoFragment(int weekNum) {
-        WeekVideoAndDescriptionFragment fragment = new WeekVideoAndDescriptionFragment();
+        weekVideoAndDescriptionFragment = new WeekVideoAndDescriptionFragment();
         Bundle bundle = new Bundle();
         bundle.putInt("weekNum", weekNum);
-        fragment.setArguments(bundle);
+        weekVideoAndDescriptionFragment.setArguments(bundle);
         android.support.v4.app.FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.content_frame, fragment).addToBackStack(null).commit();
+        transaction.replace(R.id.content_frame, weekVideoAndDescriptionFragment).addToBackStack(null).commit();
     }
 
     @Override
     public void setNotification(WeekCalculator weekCalculator) {
         WeeklyNotification.setAlarmManager(this, AlarmReceiver.class, weekCalculator);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (weekVideoAndDescriptionFragment != null && weekVideoAndDescriptionFragment.fullScreen)
+            weekVideoAndDescriptionFragment.videoPlayer.setFullscreen(false);
+        else
+            super.onBackPressed();
     }
 }

@@ -76,7 +76,7 @@ public class HtmlParser {
         helpfulLinks.add(StringUtils.substringBetween(paragraph, "href=\"", "\""));
     }
 
-    private void extractListPageLink(String paragraph) throws IOException {
+    private void extractListPageLink(String paragraph) {
         String link = StringUtils.substringBetween(paragraph, "href=\"", "/\"");
         String title = StringUtils.substringAfter(link, "http://medtwice.com/");
         title = title.replace("-", " ");
@@ -103,6 +103,7 @@ public class HtmlParser {
             }
             text.append(paragraph);
             paragraphText = text.toString();
+            paragraphText = StringUtils.remove(paragraphText, "\n");
         }
         //extract paragraph with bold category and info text
         else if (paragraph.contains("<strong>")) {
@@ -127,8 +128,11 @@ public class HtmlParser {
             }
             text.append(paragraph);
             paragraphText = text.toString();
-        } else
+            paragraphText = StringUtils.remove(paragraphText, "\n");
+        } else {
             paragraphText = paragraph;
+            paragraphText = StringUtils.remove(paragraphText, "\n");
+        }
         paragraphText = removeTextJunk(paragraphText);
         if (!paragraphText.equals(""))
             paragraphs.add(paragraphText);
@@ -143,7 +147,6 @@ public class HtmlParser {
         text = StringUtils.remove(text, "<em>");
         text = StringUtils.remove(text, "</em>");
         text = StringUtils.remove(text, "amp;");
-        text = StringUtils.remove(text, "\n");
         return text;
     }
 

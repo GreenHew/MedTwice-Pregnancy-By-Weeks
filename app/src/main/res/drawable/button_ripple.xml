@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:color="@color/colorPrimaryDark"
+    tools:targetApi="lollipop">
+    <item android:id="@android:id/mask"
+        android:drawable="@drawable/layout_border_button">
+    </item>
+    <item android:id="@android:id/background"
+        android:drawable="@drawable/layout_border_button">
+    </item>
+</ripple>
