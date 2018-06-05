@@ -1,4 +1,4 @@
-package com.example.matthew.pregnancybyweeksapp;
+package com.green.matthew.pregnancybyweeksapp;
 
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;

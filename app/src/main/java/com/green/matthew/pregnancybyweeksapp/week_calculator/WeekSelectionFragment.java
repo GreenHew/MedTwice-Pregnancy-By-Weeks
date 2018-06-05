@@ -1,6 +1,5 @@
-package com.example.matthew.pregnancybyweeksapp.week_calculator;
+package com.green.matthew.pregnancybyweeksapp.week_calculator;
 
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -11,7 +10,6 @@ import android.provider.FontRequest;
 import android.provider.FontsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,13 +20,12 @@ import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.example.matthew.pregnancybyweeksapp.R;
-import com.example.matthew.pregnancybyweeksapp.WeekVideoAndDescriptionFragment;
+import com.green.matthew.pregnancybyweeksapp.R;
+import com.green.matthew.pregnancybyweeksapp.WeekVideoAndDescriptionFragment;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
-import static android.content.ContentValues.TAG;
 
 public class WeekSelectionFragment extends android.support.v4.app.Fragment implements View.OnClickListener{
     private static final String[] selectionModes = {"Last Menstrual Period (LMP)", "Conception Date", "Projected Due Date"};
@@ -128,7 +125,7 @@ public class WeekSelectionFragment extends android.support.v4.app.Fragment imple
         try {
             onAcceptClickListener = (OnAcceptClickListener) context;
         } catch (ClassCastException e) {
-            Log.e(TAG, "onAttach: Activity doesn't implement OnAcceptClickListener", e);
+            e.printStackTrace();
         }
     }
 
@@ -180,13 +177,5 @@ public class WeekSelectionFragment extends android.support.v4.app.Fragment imple
         transaction.replace(R.id.content_frame, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
-
-//        Intent intent = new Intent(getActivity(), WeekVideoAndDescriptionActivity.class);
-//        startActivity(intent);
-
-//        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
-//        Log.i("year", "year " + preferences.getInt("year", 0));
-//        Log.i("month", "month " + preferences.getInt("month", 0));
-//        Log.i("day", "day " + preferences.getInt("day", 0));
     }
 }

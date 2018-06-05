@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.matthew.pregnancybyweeksapp">
+    package="com.green.matthew.pregnancybyweeksapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
@@ -17,7 +17,7 @@
             </intent-filter>
         </receiver>
         <activity
-            android:name="com.example.matthew.pregnancybyweeksapp.MainActivity"
+            android:name="com.green.matthew.pregnancybyweeksapp.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|layoutDirection"
             android:screenOrientation="portrait">
             <intent-filter>

@@ -1,6 +1,4 @@
-package com.example.matthew.pregnancybyweeksapp;
-
-import android.util.Log;
+package com.green.matthew.pregnancybyweeksapp;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -24,19 +22,15 @@ public class HtmlParser {
         long millis = System.currentTimeMillis();
         String link = "http://medtwice.com/pregnancy-by-weeks-week-" +  weekNum + "/";
         parseData(link);
-        Log.i("parse time", System.currentTimeMillis() - millis + "");
     }
 
     HtmlParser(String link) {
-        if (link.equals("http://medtwice.com/labs-during-first-prenatal-visit/"))
-            Log.i("broken link", "link is ok");
         parseData(link);
     }
 
     private void parseData(final String link) {
         try {
             Document document = Jsoup.connect(link).get();
-            Log.i("parse start", "parse started " + link);
             Elements rawParagraphs = document.select("p");
             boolean isPBW = false;
             extractPageTitle(document.title());
@@ -60,7 +54,6 @@ public class HtmlParser {
                     extractTextParagraph(paragraph);
                 }
             }
-            Log.i("parse", "parse finished " + link);
         } catch (IOException e) {
             e.printStackTrace();
             parseFailed = true;

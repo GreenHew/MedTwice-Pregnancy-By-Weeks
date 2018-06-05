@@ -1,4 +1,4 @@
-package com.example.matthew.pregnancybyweeksapp.notifications;
+package com.green.matthew.pregnancybyweeksapp.notifications;
 
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
@@ -12,10 +12,10 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
-import com.example.matthew.pregnancybyweeksapp.MainActivity;
-import com.example.matthew.pregnancybyweeksapp.R;
-import com.example.matthew.pregnancybyweeksapp.notifications.AlarmReceiver;
-import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekCalculator;
+import com.green.matthew.pregnancybyweeksapp.MainActivity;
+import com.green.matthew.pregnancybyweeksapp.R;
+import com.green.matthew.pregnancybyweeksapp.notifications.AlarmReceiver;
+import com.green.matthew.pregnancybyweeksapp.week_calculator.WeekCalculator;
 
 import java.util.Calendar;
 

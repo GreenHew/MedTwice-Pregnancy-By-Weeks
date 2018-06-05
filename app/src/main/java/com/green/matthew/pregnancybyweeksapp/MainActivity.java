@@ -1,4 +1,4 @@
-package com.example.matthew.pregnancybyweeksapp;
+package com.green.matthew.pregnancybyweeksapp;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -21,13 +21,13 @@ import android.view.SubMenu;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.example.matthew.pregnancybyweeksapp.notifications.AlarmReceiver;
-import com.example.matthew.pregnancybyweeksapp.notifications.WeeklyNotification;
-import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekCalculator;
-import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorConception;
-import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorDueDate;
-import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorLMP;
-import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekSelectionFragment;
+import com.green.matthew.pregnancybyweeksapp.notifications.AlarmReceiver;
+import com.green.matthew.pregnancybyweeksapp.notifications.WeeklyNotification;
+import com.green.matthew.pregnancybyweeksapp.week_calculator.WeekCalculator;
+import com.green.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorConception;
+import com.green.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorDueDate;
+import com.green.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorLMP;
+import com.green.matthew.pregnancybyweeksapp.week_calculator.WeekSelectionFragment;
 import com.google.android.gms.ads.MobileAds;
 
 import org.apache.commons.lang3.StringUtils;
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements WeekSelectionFrag
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         instanceState = savedInstanceState;
-        MobileAds.initialize(this, "ca-app-pub-1925319439423876~2819745476");
+        MobileAds.initialize(this, "ca-app-pub-8238105717164372~1127760985");
 
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)

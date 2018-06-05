@@ -1,4 +1,4 @@
-package com.example.matthew.pregnancybyweeksapp;
+package com.green.matthew.pregnancybyweeksapp;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -6,15 +6,12 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
 import android.provider.FontRequest;
 import android.provider.FontsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +28,6 @@ import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -183,7 +179,7 @@ public class WeekVideoAndDescriptionFragment extends android.support.v4.app.Frag
             weakFragment.bodyText.setText(body.toString());
             weakFragment.setHelpfulLinks(result.getHelpfulLinks(), result.getHelpfulLinkTitles());
             AdRequest adRequest = new AdRequest.Builder()
-                    .addKeyword("pregnant")
+                    .setGender(AdRequest.GENDER_FEMALE)
                     .addKeyword("pregnancy")
                     .build();
             weakFragment.adView.loadAd(adRequest);
@@ -262,15 +258,6 @@ public class WeekVideoAndDescriptionFragment extends android.support.v4.app.Frag
         ViewGroup.LayoutParams params = listView.getLayoutParams();
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (videoPlayer != null &&
-                Objects.requireNonNull(getActivity()).getResources().getConfiguration().orientation
-                == Configuration.ORIENTATION_PORTRAIT)
-            videoPlayer.setFullscreen(false);
     }
 
     @Override

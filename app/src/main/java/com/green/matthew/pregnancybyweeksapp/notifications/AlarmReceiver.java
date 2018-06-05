@@ -1,4 +1,4 @@
-package com.example.matthew.pregnancybyweeksapp.notifications;
+package com.green.matthew.pregnancybyweeksapp.notifications;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,11 +6,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.example.matthew.pregnancybyweeksapp.MainActivity;
-import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekCalculator;
-import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorConception;
-import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorDueDate;
-import com.example.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorLMP;
+import com.green.matthew.pregnancybyweeksapp.MainActivity;
+import com.green.matthew.pregnancybyweeksapp.week_calculator.WeekCalculator;
+import com.green.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorConception;
+import com.green.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorDueDate;
+import com.green.matthew.pregnancybyweeksapp.week_calculator.WeekCalculatorLMP;
 
 
 public class AlarmReceiver extends BroadcastReceiver {

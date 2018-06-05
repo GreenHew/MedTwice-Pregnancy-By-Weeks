@@ -1,4 +1,4 @@
-package com.example.matthew.pregnancybyweeksapp.week_calculator;
+package com.green.matthew.pregnancybyweeksapp.week_calculator;
 
 public class WeekCalculator {
     private int year;
@@ -36,7 +36,4 @@ public class WeekCalculator {
         this.currentWeek = currentWeek;
     }
 
-    public void setDaysUntilNextWeek(int daysUntilNextWeek) {
-        this.daysUntilNextWeek = daysUntilNextWeek;
-    }
 }

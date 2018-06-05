@@ -1,4 +1,4 @@
-package com.example.matthew.pregnancybyweeksapp;
+package com.green.matthew.pregnancybyweeksapp;
 
 import org.junit.Test;
 

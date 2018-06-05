@@ -1,4 +1,4 @@
-package com.example.matthew.pregnancybyweeksapp;
+package com.green.matthew.pregnancybyweeksapp;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
