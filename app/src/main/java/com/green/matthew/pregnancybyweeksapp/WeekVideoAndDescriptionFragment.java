@@ -180,7 +180,8 @@ public class WeekVideoAndDescriptionFragment extends android.support.v4.app.Frag
             weakFragment.setHelpfulLinks(result.getHelpfulLinks(), result.getHelpfulLinkTitles());
             AdRequest adRequest = new AdRequest.Builder()
                     .setGender(AdRequest.GENDER_FEMALE)
-                    .addKeyword("pregnancy")
+                    .addKeyword("baby")
+                    .addKeyword("newborn")
                     .build();
             weakFragment.adView.loadAd(adRequest);
             if (!weakFragment.isWeekVideo)
